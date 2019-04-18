@@ -1,0 +1,16 @@
+div#details {
+  background-color: #e5e8e8;
+  height: 100vh;
+}
+
+div#title_row {
+  border-bottom: 4px solid black;
+}
+
+.info {
+  height: 55vh;
+}
+
+.info > .col-lg-3 {
+  border: 4px solid;
+}

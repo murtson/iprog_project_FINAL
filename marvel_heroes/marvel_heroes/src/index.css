@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css?family=Bangers");
+
+html {
+  min-height: 100% !important;
+}
+
+body {
+  font-family: "Bangers", cursive !important;
+  min-height: 100% !important;
+}
+
+button.btn-primary {
+  background-color: #ec7063;
+  box-shadow: 2px 2px black;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: 5px;
+}
