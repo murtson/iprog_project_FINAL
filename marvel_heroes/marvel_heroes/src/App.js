@@ -28,7 +28,8 @@ import {
   faBookOpen,
   faUsers,
   faSignOutAlt,
-  faBox
+  faBox,
+  faUser
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faSignInAlt);
@@ -49,6 +50,7 @@ library.add(faUsers);
 library.add(faBell);
 library.add(faGem);
 library.add(faHistory);
+library.add(faUser);
 
 class App extends Component {
   render() {
@@ -58,10 +60,7 @@ class App extends Component {
         <Navbar />
 
         <Route exact path="/" render={() => <Home />} />
-        <Route
-          path="/collection"
-          render={() => <Collection model={modelInstance} />}
-        />
+        <Route path="/collection" render={() => <Collection />} />
         <Route path="/trades" render={() => <Notifications />} />
         <Route path="/search" render={() => <Search model={modelInstance} />} />
         <Route

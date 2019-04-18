@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import SignedInLinks from "./SignedInLinks";
 import SignedOutLinks from "./SignedOutLinks";
 import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Navbar = props => {
-  const { auth } = props;
+  const { auth, profile } = props;
 
   //this checks if the props.auth.uid exists, which it only does if an user is signed in. Based on that, we display different kind of links
   const links = auth.uid ? <SignedInLinks /> : <SignedOutLinks />;

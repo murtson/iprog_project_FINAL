@@ -4,6 +4,10 @@ const HASH = "ed180657d87dc301ebcafec2ddc77bf7";
 
 class MarvelModel {
   getMarvelInfo(filter, type) {
+    if (!type) {
+      type = "characters";
+    }
+
     if (!filter) {
       this._url = `${BASE_URL}${type}?limit=12&ts=1&apikey=${API_KEY}&hash=${HASH}`;
     } else {

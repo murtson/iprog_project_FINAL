@@ -169,10 +169,9 @@ async function getRandChar() {
     const randomChar = await fetch(url)
       .then(response => response.json())
       .then(json => json.data.results[0])
-      .catch(err => console.log(err));
+      .catch();
 
     if (randomChar.thumbnail.path === bad_img) {
-      console.log("no img: " + randomChar.id);
     } else {
       checked_img = true;
       return randomChar;

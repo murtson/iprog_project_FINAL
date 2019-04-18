@@ -26,11 +26,11 @@ class Collection extends Component {
     }
   };
 
-  handleOpen = () => {
+  handleOpenPackage = () => {
     if (this.props.cardPackages > 0) {
       this.props.openPackage();
     } else {
-      console.log("You have no packages to open...");
+      alert("You have no packages to open...");
     }
   };
 
@@ -39,15 +39,17 @@ class Collection extends Component {
       this.props.currency < this.state.amount_1 * 100 ||
       this.state.amount_1 == 0
     ) {
-      console.log("not enough money");
+      alert("Not enough funds :(");
       return;
     } else {
       this.props.buyCardPackage(this.state.amount_1);
+      this.setState({
+        amount_1: 0
+      });
     }
   };
 
   handleSellCardError = card => {
-    console.log("handeling error");
     this.props.sellCard(card);
     this.props.removeCardFromShowCase(card);
   };
@@ -71,24 +73,20 @@ class Collection extends Component {
   };
 
   render() {
-    if (!this.props.auth.uid) return <Redirect to="/signin" />;
+    if (!this.props.auth.uid) return <Redirect to="/signin" />; //chekcs so that the user is signed in, we don't want unauthorized users to have access to pages.
 
     let totalPrice = this.state.amount_1 * 100;
+    let timeGift = null;
+    let miniShowCase = null;
+    let myCollectionList = null;
     const now = new Date();
 
-    let timeGift = null;
-
+    // checks to see if the props lastGift exists
     if (this.props.lastGift) {
-      let minute = Math.floor(
+      let timeDifference = Math.floor(
         (now.setHours(0) - this.props.lastGift.toDate().setHours(0)) / 1000 / 60
       );
-      if (
-        Math.floor(
-          (now.setHours(0) - this.props.lastGift.toDate().setHours(0)) /
-            1000 /
-            60
-        ) > 59
-      ) {
+      if (timeDifference >= 59) {
         timeGift = (
           <button
             className="btn btn-primary"
@@ -96,15 +94,15 @@ class Collection extends Component {
               this.props.openGift();
             }}
           >
-            claim gift
+            open
           </button>
         );
       } else {
-        timeGift = 59 - minute;
+        timeGift = (
+          <h4 style={{ margin: "10px" }}>{59 - timeDifference} minutes</h4>
+        );
       }
     }
-
-    let miniShowCase = null;
     //checks if the showCase exists, or technically  speaking checks if the data from firebase has been loaded
     if (this.props.showCase) {
       //checks to see if there is any cards in the users showcase list, if so, display them on the screen
@@ -142,7 +140,6 @@ class Collection extends Component {
       );
     }
 
-    let myCollectionList = null;
     //checks if the props.collection exists, or technically speaking checks if the data from firebase has been loaded
     if (this.props.userCards && this.props.lastGift) {
       //checks to see if there is any cards in the users collection list, if so, display them on the screen
@@ -161,21 +158,13 @@ class Collection extends Component {
                   value: {card.value} <br />
                   <FontAwesomeIcon icon="gem" style={{ marginRight: "5px" }} />
                   rarity: {card.rarity}
-                  <br />
-                  <FontAwesomeIcon
-                    icon="history"
-                    style={{ marginRight: "5px" }}
-                  />
-                  obtained:
                 </p>
-
                 <button
                   className="btn btn-primary"
                   style={{ backgroundColor: "#85C1E9  ", width: "90px" }}
                 >
                   More info
                 </button>
-
                 <button
                   onClick={() => {
                     this.handleSellCardError(card);
@@ -235,21 +224,23 @@ class Collection extends Component {
               </div>
             </div>
             <div className="row" style={{ backgroundColor: "#5DADE2" }}>
-              <h4 style={{ margin: "10px" }}>
-                <FontAwesomeIcon
-                  icon="coins"
-                  style={{
-                    fontSize: "25px",
-                    marginRight: "5px",
-                    marginLeft: "5px",
-                    color: "yellow"
-                  }}
-                />
-                Currency: {this.props.currency}
-              </h4>
+              <div className="col-12">
+                <h4 style={{ margin: "10px" }}>
+                  <FontAwesomeIcon
+                    icon="coins"
+                    style={{
+                      fontSize: "25px",
+                      marginRight: "5px",
+                      marginLeft: "5px",
+                      color: "yellow"
+                    }}
+                  />
+                  Currency: {this.props.currency}
+                </h4>
+              </div>
             </div>
             <div className="row" style={{ backgroundColor: "#5DADE2" }}>
-              <div className="col-9">
+              <div className="col-8">
                 <h4 style={{ margin: "10px" }}>
                   <FontAwesomeIcon
                     icon="box"
@@ -263,11 +254,11 @@ class Collection extends Component {
                   Card packages: {this.props.cardPackages}
                 </h4>
               </div>
-              <div className="col-3">
+              <div className="col-4">
                 <button
                   className="btn btn-primary"
                   onClick={() => {
-                    this.handleOpen();
+                    this.handleOpenPackage();
                   }}
                 >
                   open
@@ -278,7 +269,7 @@ class Collection extends Component {
               className="row"
               style={{ backgroundColor: "#5DADE2", borderBottom: "6px solid" }}
             >
-              <div className="col-9">
+              <div className="col-8">
                 <h4 style={{ margin: "10px" }}>
                   <FontAwesomeIcon
                     icon="stopwatch"
@@ -289,16 +280,17 @@ class Collection extends Component {
                       color: "#E74C3C"
                     }}
                   />
-                  free gift in: {timeGift} minutes
+                  free gift in:
                 </h4>
               </div>
-              <div className="col-3" />
+              <div className="col-4">{timeGift}</div>
             </div>
 
             <div
               className="row"
               style={{
-                paddingBottom: "15px"
+                paddingBottom: "15px",
+                backgroundColor: "#a2cd48"
               }}
             >
               <h1 style={{ margin: "5px" }}>Get new cards:</h1>
@@ -314,7 +306,10 @@ class Collection extends Component {
                 <h3>Price</h3>
               </div>
             </div>
-            <div className="row" style={{ marginBottom: "20px" }}>
+            <div
+              className="row"
+              style={{ paddingBottom: "20px", backgroundColor: "#a2cd48" }}
+            >
               <div className="col-2">
                 <FontAwesomeIcon
                   icon="box"
@@ -351,7 +346,10 @@ class Collection extends Component {
               </div>
             </div>
             <div className="row">
-              <div className="col-12 text-center">
+              <div
+                className="col-12 text-center"
+                style={{ backgroundColor: "#a2cd48", paddingBottom: "15px" }}
+              >
                 <button
                   className="btn-primary"
                   onClick={() => {
@@ -366,7 +364,7 @@ class Collection extends Component {
               <div
                 className="col-12"
                 id="miniShowCase"
-                style={{ borderTop: "6px solid black", marginTop: "10px" }}
+                style={{ borderTop: "6px solid black", paddingTop: "10px" }}
               >
                 <div className="row">
                   <div className="col-12 text-center">
@@ -400,7 +398,6 @@ class Collection extends Component {
 we need are accesess through the props, and state of this component is no longer needed*/
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     showCase: state.firebase.profile.showCase,
     auth: state.firebase.auth,

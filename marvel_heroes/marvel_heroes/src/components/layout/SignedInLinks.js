@@ -9,6 +9,7 @@ import { signOut } from "../../store/actions/authActions";
 import { faBookOpen } from "@fortawesome/free-solid-svg-icons";
 
 const SignedInLinks = props => {
+  const { auth, profile } = props;
   return (
     <ul className="navbar-nav ml-auto">
       <li className="nav-item">
@@ -39,6 +40,12 @@ const SignedInLinks = props => {
   );
 };
 
+const mapStateToProps = state => {
+  return {
+    profile: state.firebase.profile
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     // the return represents what methods we want to attached to the components props. props.signOut
@@ -47,6 +54,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SignedInLinks);

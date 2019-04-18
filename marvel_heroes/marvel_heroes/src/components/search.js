@@ -9,7 +9,7 @@ class Search extends Component {
     super(props);
     this.state = {
       status: "LOADING",
-      type: "characters"
+      type: localStorage.getItem("searchType")
     };
   }
 
@@ -31,6 +31,7 @@ class Search extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    localStorage.setItem("searchType", e.target[1].value);
     this.setState({
       status: "LOADING",
       type: e.target[1].value
@@ -134,6 +135,9 @@ class Search extends Component {
                   placeholder="enter keywords"
                 />
                 <select className="marvelType" name="marvelType">
+                  <option value="" disabled selected>
+                    Choose search category
+                  </option>
                   <option value="characters">characters</option>
                   <option value="comics">comics</option>
                   <option value="events">events</option>

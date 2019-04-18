@@ -68,7 +68,6 @@ export const sellCard = card => {
     const cards = getState().firebase.profile.cards;
     const newCards = cards.filter(item => item.cardId !== card.cardId);
     const newCurrency = getState().firebase.profile.currency + card.value;
-    console.log(newCurrency);
 
     firestore
       .collection("users")
@@ -95,12 +94,10 @@ export const buyCardPackage = order => {
     // make async call to database
     const firestore = getFirestore();
     const profileId = getState().firebase.auth.uid;
-    const currency = getState().firebase.profile.currency;
     const cardPackages = getState().firebase.profile.cardPackages;
 
     const newCardPackages = parseInt(cardPackages) + parseInt(order);
     const newCurrency = getState().firebase.profile.currency - order * 100;
-    console.log(newCurrency);
 
     firestore
       .collection("users")
@@ -292,10 +289,9 @@ async function getRandChar() {
     const randomChar = await fetch(url)
       .then(response => response.json())
       .then(json => json.data.results[0])
-      .catch(err => console.log(err));
+      .catch();
 
     if (randomChar.thumbnail.path === bad_img) {
-      console.log("no img: " + randomChar.id);
     } else {
       checked_img = true;
       return randomChar;

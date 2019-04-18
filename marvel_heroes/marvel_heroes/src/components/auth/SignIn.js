@@ -10,7 +10,8 @@ import { Redirect } from "react-router-dom";
 class SignIn extends Component {
   state = {
     email: "",
-    password: ""
+    password: "",
+    authError: null
   };
 
   handleChange = e => {
@@ -25,6 +26,8 @@ class SignIn extends Component {
   };
 
   render() {
+    console.log(authError);
+
     const { authError, auth } = this.props;
     if (auth.uid) return <Redirect to="/" />;
     return (

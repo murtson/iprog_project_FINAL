@@ -95,10 +95,19 @@ class Home extends Component {
         <div className="container-fluid">
           <div className="row">
             <div className="col-12 text-center welcomeMessage">
+              <h1 />
+
               <h1>
-                Welcome {this.props.profile.firstName}{" "}
-                {this.props.profile.lastName}
+                <FontAwesomeIcon icon="user" style={{ marginRight: "10px" }} />
+                Logged as:
+                <span style={{ color: "#E86BE6" }}>
+                  {" " +
+                    this.props.profile.firstName +
+                    " " +
+                    this.props.profile.lastName}
+                </span>
               </h1>
+
               <h2>
                 Looking to explore the marvel universe? Try out the search
                 function!
@@ -117,7 +126,7 @@ class Home extends Component {
           </div>
 
           <div className="row">
-            <Notifications />
+            <Notifications notifications={this.props.notifications} />
             <div className="col-lg-6 col-md-12 text-center myCollection">
               <Link to="/collection">
                 <h2 style={{ color: "#fff" }}>MY COLLECTION</h2>
@@ -181,6 +190,7 @@ class Home extends Component {
 we need are accesess through the props, and State of this component is no longer needed*/
 
 const mapStateToProps = state => {
+  console.log(state);
   return {
     showCase: state.firebase.profile.showCase,
     auth: state.firebase.auth,

@@ -1,10 +1,11 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./notifications.css";
+import moment from "moment";
 
 const Notifications = props => {
   const { notifications } = props;
-
+  console.log(notifications);
   return (
     <div className="col-lg-6 col-md-12 text-center trades">
       <h2>Notifications!</h2>
@@ -21,10 +22,16 @@ const Notifications = props => {
       {notifications &&
         notifications.map(item => {
           return (
-            <h5 key={item.id}>
-              <span style={{ color: "pink" }}>{item.user}</span>
-              <span>{item.content}</span>
-            </h5>
+            <ul key={item.id} style={{ color: "#2ECC71" }}>
+              <li>
+                <span style={{ color: "#E86BE6" }}>{item.user}</span>
+                <span style={{ color: "#2ECC71" }}> {item.content}</span>
+                <br />
+                <span style={{ color: "white" }}>
+                  {moment(item.time.toDate()).fromNow()}
+                </span>
+              </li>
+            </ul>
           );
         })}
     </div>
