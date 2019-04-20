@@ -1,8 +1,4 @@
 .home {
-  background-image: url("../images/panther.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   color: #fff;
   height: 100vh;
   border-top: 6px solid black;
@@ -11,7 +7,11 @@
 .welcomeMessage {
   border-left: 6px solid black;
   border-right: 6px solid black;
-  height: 400px;
+  height: 450px;
+  background-image: url("../images/panther.jpg");
+  background-position: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .welcomeMessage h1 {
@@ -43,10 +43,11 @@
   background-size: cover;
 }
 
+.home h1,
 .home h2,
 .home h3,
 .home h4 {
-  margin: 10px;
+  margin: 15px;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
   color: white;
 }
@@ -79,26 +80,26 @@
 
 #showCard .card-title {
   height: 60px;
-  overflow: auto;
+  overflow: hide;
 }
 
-.card-common .card-body {
+.card-common {
   background-color: #a6acaf;
 }
 
-.card-uncommon .card-body {
+.card-uncommon {
   background-color: #28b463;
 }
 
-.card-rare .card-body {
+.card-rare {
   background-color: #3498db;
 }
 
-.card-epic .card-body {
+.card-epic {
   background-color: #8e44ad;
 }
 
-.card-legendary .card-body {
+.card-legendary {
   background-color: #f39c12;
 }
 

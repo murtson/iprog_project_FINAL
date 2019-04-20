@@ -43,6 +43,11 @@ class details extends Component {
               <h1 style={{ marginTop: "350px" }}>
                 THE RESULTS ARE BEING LOADED
               </h1>
+              <div className="lds-facebook">
+                <div />
+                <div />
+                <div />
+              </div>
             </div>
           </div>
         );

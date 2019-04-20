@@ -12,10 +12,12 @@ import { sellCard } from "../store/actions/cardActions";
 import { buyCardPackage } from "../store/actions/cardActions";
 import { openPackage } from "../store/actions/cardActions";
 import { openGift } from "../store/actions/cardActions";
+import moment from "moment";
 
 class Collection extends Component {
   state = {
-    amount_1: 0
+    amount_1: 0,
+    showOpenPackage: true
   };
 
   handleChange = e => {
@@ -26,27 +28,25 @@ class Collection extends Component {
     }
   };
 
-  handleOpenPackage = () => {
+  async handleOpenPackage() {
     if (this.props.cardPackages > 0) {
-      this.props.openPackage();
+      this.setState({
+        showOpenPackage: false
+      });
+      await this.props.openPackage();
+      this.setState({
+        showOpenPackage: true
+      });
     } else {
       alert("You have no packages to open...");
     }
-  };
+  }
 
   handleBuyError = () => {
-    if (
-      this.props.currency < this.state.amount_1 * 100 ||
-      this.state.amount_1 == 0
-    ) {
-      alert("Not enough funds :(");
-      return;
-    } else {
-      this.props.buyCardPackage(this.state.amount_1);
-      this.setState({
-        amount_1: 0
-      });
-    }
+    this.props.buyCardPackage(this.state.amount_1);
+    this.setState({
+      amount_1: 0
+    });
   };
 
   handleSellCardError = card => {
@@ -68,6 +68,14 @@ class Collection extends Component {
     }
   };
 
+  existInShowCase(card) {
+    for (var i in this.props.showCase) {
+      if (this.props.showCase[i].cardId === card.cardId) {
+        return true;
+      }
+    }
+  }
+
   removeShowCaseCard = id => {
     this.props.removeCardFromShowCase(id);
   };
@@ -79,17 +87,20 @@ class Collection extends Component {
     let timeGift = null;
     let miniShowCase = null;
     let myCollectionList = null;
-    const now = new Date();
 
     // checks to see if the props lastGift exists
     if (this.props.lastGift) {
+      const timeNow = new Date();
+      const lastGiftTime = this.props.lastGift.toDate();
+
       let timeDifference = Math.floor(
-        (now.setHours(0) - this.props.lastGift.toDate().setHours(0)) / 1000 / 60
+        (timeNow.getTime() - lastGiftTime.getTime()) / 60000
       );
       if (timeDifference >= 59) {
         timeGift = (
           <button
             className="btn btn-primary"
+            style={{ width: "100px" }}
             onClick={() => {
               this.props.openGift();
             }}
@@ -108,18 +119,23 @@ class Collection extends Component {
       //checks to see if there is any cards in the users showcase list, if so, display them on the screen
       if (this.props.showCase.length) {
         miniShowCase = this.props.showCase.map(card => (
-          <div className="col-3 text-center" key={card.id}>
+          <div className="col-3 text-center" key={card.name}>
             <div
-              className="card"
+              className={"card-" + card.rarity}
               id="miniCard"
               onClick={() => {
                 this.removeShowCaseCard(card);
               }}
             >
-              <p className="card-title">{card.name}</p>
-              <p className="card-text" style={{ height: "50px" }}>
-                click to remove
-              </p>
+              <img
+                className="card-img-top"
+                style={{ height: "90px" }}
+                src={card.img}
+                alt="cardtext"
+              />
+              <div className="card-body">
+                <p className="card-text">click to remove</p>
+              </div>
             </div>
           </div>
         ));
@@ -158,31 +174,45 @@ class Collection extends Component {
                   value: {card.value} <br />
                   <FontAwesomeIcon icon="gem" style={{ marginRight: "5px" }} />
                   rarity: {card.rarity}
+                  <br />
+                  <FontAwesomeIcon
+                    icon="history"
+                    style={{ marginRight: "5px" }}
+                  />
+                  obtained:{" "}
+                  {moment(card.obtained.toDate()).format("MMM Do YYYY")}
                 </p>
-                <button
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#85C1E9  ", width: "90px" }}
-                >
-                  More info
-                </button>
+
                 <button
                   onClick={() => {
                     this.handleSellCardError(card);
                   }}
                   className="btn btn-primary"
-                  style={{ width: "90px" }}
+                  style={{ width: "150px" }}
                 >
                   Sell
                 </button>
-                <button
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#F5B041" }}
-                  onClick={() => {
-                    this.handleAddShowCaseError(card);
-                  }}
-                >
-                  Showcase
-                </button>
+                {this.existInShowCase(card) ? (
+                  <button
+                    className="btn btn-primary"
+                    style={{ backgroundColor: "#D35400", width: "150px" }}
+                    onClick={() => {
+                      this.removeShowCaseCard(card);
+                    }}
+                  >
+                    remove showcase
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-primary"
+                    style={{ backgroundColor: "#F5B041", width: "150px" }}
+                    onClick={() => {
+                      this.handleAddShowCaseError(card);
+                    }}
+                  >
+                    add Showcase
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -198,8 +228,13 @@ class Collection extends Component {
       //this is displayed as long as the program is connecting to firebase. this.props.collection have yet to "exist
     } else {
       myCollectionList = (
-        <div className="col-12 text-center">
+        <div className="col-12 text-center" style={{ marginTop: "30vh" }}>
           <h2>Loading cards...</h2>
+          <div className="lds-facebook">
+            <div />
+            <div />
+            <div />
+          </div>
         </div>
       );
     }
@@ -255,14 +290,25 @@ class Collection extends Component {
                 </h4>
               </div>
               <div className="col-4">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    this.handleOpenPackage();
-                  }}
-                >
-                  open
-                </button>
+                {this.state.showOpenPackage ? (
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: "100px" }}
+                    onClick={() => {
+                      this.handleOpenPackage();
+                    }}
+                  >
+                    open
+                  </button>
+                ) : (
+                  <button
+                    style={{ width: "100px" }}
+                    className="btn btn-primary"
+                    disabled
+                  >
+                    opening...
+                  </button>
+                )}
               </div>
             </div>
             <div
@@ -342,7 +388,9 @@ class Collection extends Component {
                 <h4 align="left">Total:</h4>
               </div>
               <div className="col-6" style={{}}>
-                <h4 align="right">{totalPrice}</h4>
+                <h4 style={{ color: "#F02E2E" }} align="right">
+                  {totalPrice}
+                </h4>
               </div>
             </div>
             <div className="row">
@@ -350,14 +398,25 @@ class Collection extends Component {
                 className="col-12 text-center"
                 style={{ backgroundColor: "#a2cd48", paddingBottom: "15px" }}
               >
-                <button
-                  className="btn-primary"
-                  onClick={() => {
-                    this.handleBuyError();
-                  }}
-                >
-                  Confirm order
-                </button>
+                {this.props.currency < this.state.amount_1 * 100 ||
+                this.state.amount_1 == 0 ? (
+                  <button
+                    className="btn-primary"
+                    style={{ backgroundColor: "#BFC9CA" }}
+                    disabled
+                  >
+                    no order
+                  </button>
+                ) : (
+                  <button
+                    className="btn-primary"
+                    onClick={() => {
+                      this.handleBuyError();
+                    }}
+                  >
+                    Confirm order
+                  </button>
+                )}
               </div>
             </div>
             <div className="row">

@@ -44,7 +44,8 @@ export const addCardToShowCase = card => {
               marvelId: card.marvelId,
               img: card.img,
               rarity: card.rarity,
-              value: card.value
+              value: card.value,
+              obtained: card.obtained
             }
           ]
         },
@@ -68,6 +69,17 @@ export const sellCard = card => {
     const cards = getState().firebase.profile.cards;
     const newCards = cards.filter(item => item.cardId !== card.cardId);
     const newCurrency = getState().firebase.profile.currency + card.value;
+
+    firestore
+      .collection("cards")
+      .doc(card.cardId)
+      .delete()
+      .then(() => {
+        console.log("card deleted from cards collection");
+      })
+      .catch(err => {
+        console.log("cards collection delete error", err);
+      });
 
     firestore
       .collection("users")
@@ -136,7 +148,6 @@ export const openGift = () => {
           cardPackages: newCardPackages,
           lastGift: firebase.firestore.FieldValue.serverTimestamp()
         },
-
         { merge: true }
       )
       .then(() => {
@@ -152,20 +163,42 @@ export const openPackage = () => {
   return async (dispatch, getState, { getFirebase, getFirestore }) => {
     // make async call to database
     const firestore = getFirestore();
+    const firebase = getFirebase();
     const profileId = getState().firebase.auth.uid;
     const cardPackages = getState().firebase.profile.cardPackages;
     const cards = getState().firebase.profile.cards;
-
     const newCardPackages = parseInt(cardPackages) - 1;
 
-    const charOne = await createACard(firestore);
-    const charTwo = await createACard(firestore);
-    const charThree = await createACard(firestore);
+    //Creating three cards...
+    const charOne = await createAllCards(firestore, firebase);
+    const charTwo = await createAllCards(firestore, firebase);
+    const charThree = await createAllCards(firestore, firebase);
 
-    const characterOne = await createTestCard();
-    const characterTwo = await createTestCard();
-    const characterThree = await createTestCard();
+    //getting data about each card that was created above..
+    const characterOne = await firestore
+      .collection("cards")
+      .doc(charOne.id)
+      .get()
+      .then(doc => {
+        return doc.data();
+      });
 
+    const characterTwo = await firestore
+      .collection("cards")
+      .doc(charTwo.id)
+      .get()
+      .then(doc => {
+        return doc.data();
+      });
+    const characterThree = await firestore
+      .collection("cards")
+      .doc(charThree.id)
+      .get()
+      .then(doc => {
+        return doc.data();
+      });
+
+    //adding the three cards to the users card collection...
     firestore
       .collection("users")
       .doc(profileId)
@@ -180,7 +213,8 @@ export const openPackage = () => {
               marvelId: characterOne.marvelId,
               img: characterOne.img,
               rarity: characterOne.rarity,
-              value: characterOne.value
+              value: characterOne.value,
+              obtained: characterOne.obtained
             },
             {
               cardId: charTwo.id,
@@ -188,7 +222,8 @@ export const openPackage = () => {
               marvelId: characterTwo.marvelId,
               img: characterTwo.img,
               rarity: characterTwo.rarity,
-              value: characterTwo.value
+              value: characterTwo.value,
+              obtained: characterTwo.obtained
             },
 
             {
@@ -197,7 +232,8 @@ export const openPackage = () => {
               marvelId: characterThree.marvelId,
               img: characterThree.img,
               rarity: characterThree.rarity,
-              value: characterThree.value
+              value: characterThree.value,
+              obtained: characterThree.obtained
             }
           ]
         },
@@ -205,15 +241,15 @@ export const openPackage = () => {
         { merge: true }
       )
       .then(() => {
-        dispatch({ type: "BUY_CARD_PACKAGE" });
+        dispatch({ type: "OPEN_PACKAGE" });
       })
       .catch(err => {
-        dispatch({ type: "BUY_CARD_PACKAGE_ERROR", err });
+        dispatch({ type: "OPEN_PACKAGE_ERROR", err });
       });
   };
 };
 
-async function createTestCard() {
+async function createAllCards(firestore, firebase) {
   let aChar = await getRandChar();
   let imgUrl = `${aChar.thumbnail.path}/portrait_uncanny.${
     aChar.thumbnail.extension
@@ -233,16 +269,17 @@ async function createTestCard() {
     value = 300;
   }
 
-  return {
+  return firestore.collection("cards").add({
     img: imgUrl,
     marvelId: aChar.id,
     name: aChar.name,
     rarity: rarity,
-    value: value
-  };
+    value: value,
+    obtained: firebase.firestore.FieldValue.serverTimestamp()
+  });
 }
 
-async function getRarity() {
+function getRarity() {
   let rarity = null;
   const number = Math.floor(Math.random() * 101);
   if (number <= 50) {
@@ -257,20 +294,6 @@ async function getRarity() {
     rarity = "legendary";
   }
   return rarity;
-}
-
-async function createACard(firestore) {
-  let aChar = await getRandChar();
-  let imgUrl = `${aChar.thumbnail.path}/portrait_uncanny.${
-    aChar.thumbnail.extension
-  }`;
-
-  return firestore.collection("cards").add({
-    img: imgUrl,
-    marvelId: aChar.id,
-    name: aChar.name,
-    onHand: false
-  });
 }
 
 async function getRandChar() {
@@ -289,9 +312,10 @@ async function getRandChar() {
     const randomChar = await fetch(url)
       .then(response => response.json())
       .then(json => json.data.results[0])
-      .catch();
+      .catch(err => console.log(err));
 
     if (randomChar.thumbnail.path === bad_img) {
+      console.log("no img: " + randomChar.id);
     } else {
       checked_img = true;
       return randomChar;
@@ -299,7 +323,7 @@ async function getRandChar() {
   }
 }
 
-async function getRandomOffSet() {
+function getRandomOffSet() {
   const totalCharacters = 1491;
   const min = 0;
   const num = Math.floor(Math.random() * (totalCharacters - min) + min);

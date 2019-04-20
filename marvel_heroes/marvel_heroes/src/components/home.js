@@ -8,6 +8,7 @@ import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
 import Notifications from "./notifications";
+import moment from "moment";
 
 class Home extends Component {
   removeShowCaseCard = card => {
@@ -46,15 +47,9 @@ class Home extends Component {
                     icon="history"
                     style={{ marginRight: "5px" }}
                   />
-                  obtained:
+                  obtained:{" "}
+                  {moment(card.obtained.toDate()).format("MMM Do YYYY")}
                 </p>
-
-                <button
-                  className="btn btn-primary"
-                  style={{ backgroundColor: "#85C1E9  " }}
-                >
-                  More info
-                </button>
 
                 <button
                   onClick={() => {
@@ -95,33 +90,22 @@ class Home extends Component {
         <div className="container-fluid">
           <div className="row">
             <div className="col-12 text-center welcomeMessage">
-              <h1 />
+              <h1>Welcome to collect a hero!</h1>
 
-              <h1>
-                <FontAwesomeIcon icon="user" style={{ marginRight: "10px" }} />
-                Logged as:
-                <span style={{ color: "#E86BE6" }}>
-                  {" " +
-                    this.props.profile.firstName +
-                    " " +
-                    this.props.profile.lastName}
-                </span>
-              </h1>
-
-              <h2>
-                Looking to explore the marvel universe? Try out the search
-                function!
-              </h2>
               <Link to="/search">
                 <FontAwesomeIcon
                   icon="search"
                   style={{
                     fontSize: "100px",
-                    margin: "25px",
+                    margin: "30px",
                     color: "#ECF0F1"
                   }}
                 />
               </Link>
+              <h2>
+                Looking to explore the marvel universe? Try out the search
+                function!
+              </h2>
             </div>
           </div>
 
@@ -190,7 +174,6 @@ class Home extends Component {
 we need are accesess through the props, and State of this component is no longer needed*/
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     showCase: state.firebase.profile.showCase,
     auth: state.firebase.auth,

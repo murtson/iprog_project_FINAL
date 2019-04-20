@@ -7,15 +7,19 @@
 }
 
 #miniCard {
-  height: 175px;
+  height: 180px;
   width: 85px;
   border: 2px solid;
 }
 
-#miniCard > .card-title {
-  height: 115px;
-  overflow: auto;
-  margin: 5px;
+#miniCard .card-body {
+  margin: 0px;
+  padding: 0px;
+}
+
+#miniCard .card-text {
+  margin-top: 15px;
+  overflow: hidden;
 }
 
 div#toolbar {

@@ -9,11 +9,21 @@ class Search extends Component {
     super(props);
     this.state = {
       status: "LOADING",
-      type: localStorage.getItem("searchType")
+      type: localStorage.getItem("type")
     };
   }
 
   componentDidMount() {
+    if (!localStorage.getItem("type")) {
+      this.setState({
+        type: "characters"
+      });
+    } else {
+      this.setState({
+        type: localStorage.getItem("type")
+      });
+    }
+    console.log(this.state);
     this.props.model
       .getMarvelInfo("", this.state.type)
       .then(data => {
@@ -29,9 +39,13 @@ class Search extends Component {
       });
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   handleSubmit = e => {
     e.preventDefault();
-    localStorage.setItem("searchType", e.target[1].value);
+    localStorage.setItem("type", e.target[1].value);
     this.setState({
       status: "LOADING",
       type: e.target[1].value
@@ -61,6 +75,11 @@ class Search extends Component {
         marvelList = (
           <div className="col-12 text-center" style={{ height: "75vh" }}>
             <h1 style={{ marginTop: "350px" }}>THE RESULTS ARE BEING LOADED</h1>
+            <div className="lds-facebook">
+              <div />
+              <div />
+              <div />
+            </div>
           </div>
         );
         break;
@@ -88,10 +107,7 @@ class Search extends Component {
                   <h5 className="card-title">{marvel.name || marvel.title}</h5>
                   <p className="card-text">{marvel.description}</p>
                   <Link to={`/detail/${this.state.type}/${marvel.id}`}>
-                    <button
-                      href="#testlink"
-                      className="btn btn-primary center-block"
-                    >
+                    <button className="btn btn-primary center-block">
                       learn more
                     </button>
                   </Link>
@@ -127,29 +143,40 @@ class Search extends Component {
               </div>
             </div>
             <div className="row" style={{ marginBottom: "50px" }}>
-              <form className="form" onSubmit={this.handleSubmit}>
-                <input
-                  id="searchBox"
-                  name="searchField"
-                  type="search"
-                  placeholder="enter keywords"
-                />
-                <select className="marvelType" name="marvelType">
-                  <option value="" disabled selected>
-                    Choose search category
-                  </option>
-                  <option value="characters">characters</option>
-                  <option value="comics">comics</option>
-                  <option value="events">events</option>
-                  <option value="series">series</option>
-                </select>
-                <button
-                  id="searchButton"
-                  className="btn btn-primary center-block"
-                >
-                  search
-                </button>
-              </form>
+              <div className="col-lg-6 col-sm-12">
+                <form className="form" onSubmit={this.handleSubmit}>
+                  <input
+                    id="searchBox"
+                    name="searchField"
+                    type="search"
+                    placeholder="enter keywords"
+                  />
+                  <select className="marvelType" name="marvelType">
+                    <option selected disabled>
+                      Choose search category
+                    </option>
+                    <option value="characters">characters</option>
+                    <option value="comics">comics</option>
+                    <option value="events">events</option>
+                    <option value="series">series</option>
+                  </select>
+                  <button
+                    id="searchButton"
+                    className="btn btn-primary center-block"
+                  >
+                    search
+                  </button>
+                </form>
+              </div>
+              <div
+                className="col-lg-6 col-sm-12 "
+                style={{ marginTop: "15px" }}
+              >
+                <h2>
+                  currently displaying:{" "}
+                  <span style={{ color: "#1E88E5" }}>{this.state.type}</span>
+                </h2>
+              </div>
             </div>
           </div>
         </div>

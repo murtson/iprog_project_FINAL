@@ -60,18 +60,25 @@ const cardReducer = (state = initState, action) => {
       return {
         ...state
       };
-    case "FREE_CARD_PACKAGE":
-      console.log("bought card");
-      return {
-        ...state
-      };
     case "BUY_CARD_PACKAGE_ERROR":
       console.log("buy card error");
       return {
         ...state
       };
+    case "FREE_CARD_PACKAGE":
+      console.log("bought card");
+      return {
+        ...state
+      };
+
     case "FREE_CARD_PACKAGE_ERROR":
       console.log("free card error");
+      return {
+        ...state
+      };
+
+    case "OPEN_PACKAGE":
+      console.log("opening package");
       return {
         ...state
       };

@@ -7,11 +7,24 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { connect } from "react-redux";
 import { signOut } from "../../store/actions/authActions";
 import { faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import { Navbar } from "react-bootstrap";
 
 const SignedInLinks = props => {
-  const { auth, profile } = props;
+  const { profile } = props;
+
   return (
-    <ul className="navbar-nav ml-auto">
+    <ul className="navbar-nav mr-auto">
+      <Navbar.Text style={{ marginRight: "10px" }}>
+        <FontAwesomeIcon
+          icon="user"
+          style={{ marginRight: "5px", color: "white" }}
+        />
+        <span style={{ color: "white" }}>Signed in as: </span>
+        <span style={{ color: "#E86BE6" }}>
+          {" "}
+          {profile.firstName + " " + profile.lastName}
+        </span>
+      </Navbar.Text>
       <li className="nav-item">
         <NavLink className="nav-link" exact to="/">
           <FontAwesomeIcon icon={faHome} style={{ marginRight: "5px" }} />

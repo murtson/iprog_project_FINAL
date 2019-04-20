@@ -5,7 +5,6 @@ import moment from "moment";
 
 const Notifications = props => {
   const { notifications } = props;
-  console.log(notifications);
   return (
     <div className="col-lg-6 col-md-12 text-center trades">
       <h2>Notifications!</h2>
@@ -14,7 +13,7 @@ const Notifications = props => {
         icon="bell"
         style={{
           fontSize: "50px",
-          margin: "25px",
+          margin: "10px",
           color: "#F7DC6F"
         }}
       />
