@@ -1,0 +1,122 @@
+.home {
+  color: #fff;
+  height: 100vh;
+  border-top: 6px solid black;
+}
+
+.welcomeMessage {
+  border-left: 6px solid black;
+  border-right: 6px solid black;
+  height: 450px;
+  background-image: url("../images/panther.jpg");
+  background-position: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.welcomeMessage:hover {
+  opacity: 0.6;
+}
+
+.welcomeMessage h1 {
+  margin-top: 100px;
+}
+
+.trades {
+  height: 400px;
+  border-top: 6px solid black;
+  border-left: 6px solid black;
+  border-right: 3px solid black;
+  border-bottom: 0px;
+  background-image: url("../images/thanos.jpg");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.myCollection {
+  height: 400px;
+  border: 6px solid black;
+  border-left: 3px solid black;
+  border-bottom: 0px;
+  background-image: url("../images//trades.jpg");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.myCollection:hover {
+  opacity: 0.6;
+}
+
+.home h1,
+.home h2,
+.home h3,
+.home h4 {
+  margin: 15px;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  color: white;
+}
+
+.showcase {
+  border: 6px solid BLACK;
+
+  background-image: url("../images/venom.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#showCard {
+  transition: all 0.2s ease-in-out;
+  color: black;
+  border: 2px solid;
+  margin: 25px;
+  width: 18rem;
+}
+
+#showCard:hover {
+  transform: scale(1.1);
+}
+
+#showCard img {
+  height: 250px;
+  border-bottom: 2px solid;
+}
+
+#showCard .card-title {
+  height: 60px;
+  overflow: hide;
+}
+
+.card-common {
+  background-color: #a6acaf;
+}
+
+.card-uncommon {
+  background-color: #28b463;
+}
+
+.card-rare {
+  background-color: #3498db;
+}
+
+.card-epic {
+  background-color: #8e44ad;
+}
+
+.card-legendary {
+  background-color: #f39c12;
+}
+
+a.btn-primary {
+  border: 2px solid black;
+  box-shadow: 2px 2px black;
+  background-color: #ec7063;
+}
+
+.link_page:hover {
+  text-decoration: none;
+}
