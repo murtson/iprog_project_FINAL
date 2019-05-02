@@ -29,7 +29,8 @@ import {
   faUsers,
   faSignOutAlt,
   faBox,
-  faUser
+  faUser,
+  faQuestionCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faSignInAlt);
@@ -51,6 +52,7 @@ library.add(faBell);
 library.add(faGem);
 library.add(faHistory);
 library.add(faUser);
+library.add(faQuestionCircle);
 
 class App extends Component {
   render() {

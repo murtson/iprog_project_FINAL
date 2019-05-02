@@ -1,4 +1,9 @@
-.collection {
+#cardCollection h1,
+#cardCollection h2,
+#cardCollection h3,
+#cardCollection h4 {
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  color: white;
 }
 
 #miniShowCase {
@@ -44,7 +49,6 @@ div#cardCollection {
   height: auto;
   color: #fff;
   border: 6px solid black;
-  overflow: auto;
   background-image: url("../images/trades.jpg");
   background-position: center;
   background-repeat: no-repeat;

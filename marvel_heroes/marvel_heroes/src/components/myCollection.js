@@ -13,12 +13,27 @@ import { buyCardPackage } from "../store/actions/cardActions";
 import { openPackage } from "../store/actions/cardActions";
 import { openGift } from "../store/actions/cardActions";
 import moment from "moment";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 
 class Collection extends Component {
   state = {
     amount_1: 0,
-    showOpenPackage: true
+    showOpenPackage: true,
+    showHelp: false,
+    showCollection: true
   };
+
+  displayHelp() {
+    if (this.state.showHelp === false) {
+      document.getElementById("helpText").style.display = "block";
+      document.getElementById("helpIcon").style.color = "#76D7C4 ";
+      this.setState({ showHelp: true });
+    } else {
+      document.getElementById("helpText").style.display = "none";
+      document.getElementById("helpIcon").style.color = "black ";
+      this.setState({ showHelp: false });
+    }
+  }
 
   handleChange = e => {
     if (e.target.value >= 0) {
@@ -29,17 +44,15 @@ class Collection extends Component {
   };
 
   async handleOpenPackage() {
-    if (this.props.cardPackages > 0) {
-      this.setState({
-        showOpenPackage: false
-      });
-      await this.props.openPackage();
-      this.setState({
-        showOpenPackage: true
-      });
-    } else {
-      alert("You have no packages to open...");
-    }
+    this.setState({
+      showOpenPackage: false,
+      showCollection: false
+    });
+    await this.props.openPackage();
+    this.setState({
+      showOpenPackage: true,
+      showCollection: true
+    });
   }
 
   handleBuyError = () => {
@@ -49,23 +62,9 @@ class Collection extends Component {
     });
   };
 
-  handleSellCardError = card => {
+  handleSellCard = card => {
     this.props.sellCard(card);
     this.props.removeCardFromShowCase(card);
-  };
-
-  handleAddShowCaseError = card => {
-    if (this.props.showCase.length >= 4) {
-      alert("Your showcase can only display 4 cards");
-    } else {
-      for (var i in this.props.showCase) {
-        if (this.props.showCase[i].cardId === card.cardId) {
-          alert("That card already exists in your showcase");
-          return;
-        }
-      }
-      this.props.addCardToShowCase(card);
-    }
   };
 
   existInShowCase(card) {
@@ -75,10 +74,6 @@ class Collection extends Component {
       }
     }
   }
-
-  removeShowCaseCard = id => {
-    this.props.removeCardFromShowCase(id);
-  };
 
   render() {
     if (!this.props.auth.uid) return <Redirect to="/signin" />; //chekcs so that the user is signed in, we don't want unauthorized users to have access to pages.
@@ -105,7 +100,7 @@ class Collection extends Component {
               this.props.openGift();
             }}
           >
-            open
+            claim
           </button>
         );
       } else {
@@ -124,7 +119,7 @@ class Collection extends Component {
               className={"card-" + card.rarity}
               id="miniCard"
               onClick={() => {
-                this.removeShowCaseCard(card);
+                this.props.removeCardFromShowCase(card);
               }}
             >
               <img
@@ -142,15 +137,18 @@ class Collection extends Component {
         //if there is no cards in the users showcase, display this text.
       } else {
         miniShowCase = (
-          <div className="col-12 text-center">
-            <h2>You have no cards in your showcase</h2>
+          <div className="col-12 text-center" style={{ marginTop: "55px" }}>
+            <h2>You have no cards in your showcase.</h2>
+            <p>
+              Click the "add showcase" button on the cards you wish to showcase!
+            </p>
           </div>
         );
       }
       //this is displayed as long as the program is connecting to firebase. this.props.showCase have yet to "exist
     } else {
       miniShowCase = (
-        <div className="col-12 text-center">
+        <div className="col-12 text-center" style={{ marginTop: "55px" }}>
           <h2>Loading cards...</h2>
         </div>
       );
@@ -158,70 +156,110 @@ class Collection extends Component {
 
     //checks if the props.collection exists, or technically speaking checks if the data from firebase has been loaded
     if (this.props.userCards && this.props.lastGift) {
-      //checks to see if there is any cards in the users collection list, if so, display them on the screen
-      if (this.props.userCards.length) {
-        myCollectionList = this.props.userCards.map(card => (
-          <div key={card.cardId} className="col-lg-6 col-xl-3" align="center">
-            <div className={"card-" + card.rarity} id="showCard">
-              <img className="card-img-top" src={card.img} alt="cardtext" />
-              <div className="card-body text-center">
-                <h4 className="card-title">{card.name}</h4>
-                <p className="card-text text-left">
-                  <FontAwesomeIcon
-                    icon="coins"
-                    style={{ marginRight: "5px" }}
-                  />
-                  value: {card.value} <br />
-                  <FontAwesomeIcon icon="gem" style={{ marginRight: "5px" }} />
-                  rarity: {card.rarity}
-                  <br />
-                  <FontAwesomeIcon
-                    icon="history"
-                    style={{ marginRight: "5px" }}
-                  />
-                  obtained:{" "}
-                  {moment(card.obtained.toDate()).format("MMM Do YYYY")}
-                </p>
+      if (this.state.showCollection === true) {
+        //checks to see if there is any cards in the users collection list, if so, display them on the screen
+        if (this.props.userCards.length) {
+          myCollectionList = this.props.userCards.map(card => (
+            <div key={card.cardId} className="col-lg-6 col-xl-3" align="center">
+              <div className={"card-" + card.rarity} id="showCard">
+                <img className="card-img-top" src={card.img} alt="cardtext" />
+                <div className="card-body text-center">
+                  <h4 className="card-title">{card.name}</h4>
+                  <p className="card-text text-left">
+                    <FontAwesomeIcon
+                      icon="coins"
+                      style={{ marginRight: "5px" }}
+                    />
+                    value: {card.value} <br />
+                    <FontAwesomeIcon
+                      icon="gem"
+                      style={{ marginRight: "5px" }}
+                    />
+                    rarity: {card.rarity}
+                    <br />
+                    <FontAwesomeIcon
+                      icon="history"
+                      style={{ marginRight: "5px" }}
+                    />
+                    obtained:{" "}
+                    {moment(card.obtained.toDate()).format("MMM Do YYYY")}
+                  </p>
 
-                <button
-                  onClick={() => {
-                    this.handleSellCardError(card);
-                  }}
-                  className="btn btn-primary"
-                  style={{ width: "150px" }}
-                >
-                  Sell
-                </button>
-                {this.existInShowCase(card) ? (
                   <button
-                    className="btn btn-primary"
-                    style={{ backgroundColor: "#D35400", width: "150px" }}
                     onClick={() => {
-                      this.removeShowCaseCard(card);
+                      this.handleSellCard(card);
                     }}
-                  >
-                    remove showcase
-                  </button>
-                ) : (
-                  <button
                     className="btn btn-primary"
-                    style={{ backgroundColor: "#F5B041", width: "150px" }}
-                    onClick={() => {
-                      this.handleAddShowCaseError(card);
-                    }}
+                    style={{ width: "150px" }}
                   >
-                    add Showcase
+                    Sell
                   </button>
-                )}
+                  {this.existInShowCase(card) ? (
+                    <button
+                      className="btn btn-primary"
+                      style={{ backgroundColor: "#D35400", width: "150px" }}
+                      onClick={() => {
+                        this.props.removeCardFromShowCase(card);
+                      }}
+                    >
+                      remove showcase
+                    </button>
+                  ) : this.props.showCase.length >= 4 ? (
+                    <button
+                      className="btn btn-primary"
+                      style={{ backgroundColor: "#BFC9CA", width: "150px" }}
+                      disabled
+                    >
+                      showcase full
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-primary"
+                      style={{ backgroundColor: "#F5B041", width: "150px" }}
+                      onClick={() => {
+                        this.props.addCardToShowCase(card);
+                      }}
+                    >
+                      add Showcase
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ));
-        //if there is no cards in the users collection, display this text.
+          ));
+          //if there is no cards in the users collection, display this text.
+        } else {
+          myCollectionList = (
+            <div className="col-12 text-center" style={{ marginTop: "30vh" }}>
+              <h2>
+                You currently have{" "}
+                <span style={{ color: "#E74C3C" }}>no cards :(</span>
+              </h2>
+              <h4>
+                To get cards, open a card package. You do this in{" "}
+                <span
+                  style={{
+                    color: "#5DADE2"
+                  }}
+                >
+                  "my inventory"
+                </span>{" "}
+                which is located at the top left corner of this page.
+              </h4>
+            </div>
+          );
+        }
       } else {
         myCollectionList = (
-          <div className="col-12 text-center">
-            <h2>You have no cards in your collection</h2>
+          <div className="col-12 text-center" style={{ marginTop: "30vh" }}>
+            <h2>
+              Opening <span style={{ color: "#b22222" }}>card package...</span>
+            </h2>
+            <div className="lds-facebook">
+              <div />
+              <div />
+              <div />
+            </div>
           </div>
         );
       }
@@ -257,6 +295,43 @@ class Collection extends Component {
                   </button>
                 </Link>
               </div>
+
+              <div className="col-12">
+                <h4
+                  id="helpIcon"
+                  style={{ margin: "10px" }}
+                  onClick={() => {
+                    this.displayHelp();
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faQuestionCircle}
+                    style={{
+                      fontSize: "25px",
+                      marginRight: "5px",
+                      marginLeft: "5px"
+                    }}
+                  />{" "}
+                  {this.state.showHelp === false
+                    ? "click for help"
+                    : "click to close"}
+                </h4>
+                <p id="helpText" style={{ display: "none", color: "black" }}>
+                  This is your inventory. Opening a{" "}
+                  <span style={{ color: "#b22222" }}>card package</span> gives
+                  you 3 cards. There are two ways to get{" "}
+                  <span style={{ color: "#b22222" }}>card packages</span>:
+                  either buy them with your{" "}
+                  <span style={{ color: "#F7DC6F" }}>currency</span>, (which can
+                  be done down below) or wait for{" "}
+                  <span style={{ color: "white" }}>1 hour</span> (since you get
+                  one free{" "}
+                  <span style={{ color: "#b22222" }}>card package</span> every
+                  hour). You get more{" "}
+                  <span style={{ color: "#F7DC6F" }}>currency</span> by selling
+                  cards.
+                </p>
+              </div>
             </div>
             <div className="row" style={{ backgroundColor: "#5DADE2" }}>
               <div className="col-12">
@@ -270,7 +345,10 @@ class Collection extends Component {
                       color: "yellow"
                     }}
                   />
-                  Currency: {this.props.currency}
+                  Currency:{" "}
+                  <span style={{ color: "#F7DC6F" }}>
+                    {this.props.currency}
+                  </span>
                 </h4>
               </div>
             </div>
@@ -286,23 +364,36 @@ class Collection extends Component {
                       color: "#b22222"
                     }}
                   />
-                  Card packages: {this.props.cardPackages}
+                  Card packages:{" "}
+                  <span style={{ color: "#b22222" }}>
+                    {this.props.cardPackages}
+                  </span>
                 </h4>
               </div>
               <div className="col-4">
                 {this.state.showOpenPackage ? (
-                  <button
-                    className="btn btn-primary"
-                    style={{ width: "100px" }}
-                    onClick={() => {
-                      this.handleOpenPackage();
-                    }}
-                  >
-                    open
-                  </button>
+                  this.props.cardPackages > 0 ? (
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: "100px" }}
+                      onClick={() => {
+                        this.handleOpenPackage();
+                      }}
+                    >
+                      open
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: "105px", backgroundColor: "#BFC9CA" }}
+                      disabled
+                    >
+                      no packages
+                    </button>
+                  )
                 ) : (
                   <button
-                    style={{ width: "100px" }}
+                    style={{ width: "105px" }}
                     className="btn btn-primary"
                     disabled
                   >
@@ -326,10 +417,12 @@ class Collection extends Component {
                       color: "#E74C3C"
                     }}
                   />
-                  free gift in:
+                  free card package in:
                 </h4>
               </div>
-              <div className="col-4">{timeGift}</div>
+              <div className="col-4">
+                <span style={{ color: "white" }}> {timeGift}</span>
+              </div>
             </div>
 
             <div
@@ -339,7 +432,7 @@ class Collection extends Component {
                 backgroundColor: "#a2cd48"
               }}
             >
-              <h1 style={{ margin: "5px" }}>Get new cards:</h1>
+              <h1 style={{ margin: "5px" }}>Get cards:</h1>
             </div>
             <div className="row" id="minirow1">
               <div className="col-6">
@@ -369,6 +462,7 @@ class Collection extends Component {
               </div>
               <div className="col-4" style={{ paddingTop: "3px" }}>
                 <h5>1 Card package</h5>
+                <p>(contains 3 cards)</p>
               </div>
               <div className="col-3">
                 <input
@@ -398,23 +492,33 @@ class Collection extends Component {
                 className="col-12 text-center"
                 style={{ backgroundColor: "#a2cd48", paddingBottom: "15px" }}
               >
-                {this.props.currency < this.state.amount_1 * 100 ||
-                this.state.amount_1 == 0 ? (
+                {this.state.amount_1 !== 0 ? (
+                  this.props.currency < this.state.amount_1 * 100 ? (
+                    <button
+                      className="btn-primary"
+                      style={{ backgroundColor: "#E74C3C" }}
+                      disabled
+                    >
+                      not enough funds
+                    </button>
+                  ) : (
+                    <button
+                      className="btn-primary"
+                      style={{ backgroundColor: "#58D68D" }}
+                      onClick={() => {
+                        this.handleBuyError();
+                      }}
+                    >
+                      Confirm order
+                    </button>
+                  )
+                ) : (
                   <button
                     className="btn-primary"
                     style={{ backgroundColor: "#BFC9CA" }}
                     disabled
                   >
-                    no order
-                  </button>
-                ) : (
-                  <button
-                    className="btn-primary"
-                    onClick={() => {
-                      this.handleBuyError();
-                    }}
-                  >
-                    Confirm order
+                    no order placed
                   </button>
                 )}
               </div>
@@ -441,7 +545,15 @@ class Collection extends Component {
 
           <div className="col-xl-9 col-lg-12" id="cardCollection">
             <div className="row">
-              <h2 style={{ margin: "20px" }}>CARD Collection</h2>
+              <div className="col-12 text-center">
+                <h1
+                  style={{
+                    margin: "20px"
+                  }}
+                >
+                  CARD COLLECTION:
+                </h1>
+              </div>
             </div>
             <div className="row" id="collectionRow">
               {myCollectionList}
@@ -454,7 +566,7 @@ class Collection extends Component {
 }
 
 /* Mapping the state off the Redux store to the props of this component, therefore all the data
-we need are accesess through the props, and state of this component is no longer needed*/
+we need are accesess through the props*/
 
 const mapStateToProps = state => {
   return {

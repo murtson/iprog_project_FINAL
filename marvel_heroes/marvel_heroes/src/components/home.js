@@ -89,32 +89,33 @@ class Home extends Component {
       <div className="home">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-12 text-center welcomeMessage">
+            <Link
+              to="/search"
+              className="col-12 text-center welcomeMessage link_page"
+            >
               <h1>Welcome to collect a hero!</h1>
-
-              <Link to="/search">
-                <FontAwesomeIcon
-                  icon="search"
-                  style={{
-                    fontSize: "100px",
-                    margin: "30px",
-                    color: "#ECF0F1"
-                  }}
-                />
-              </Link>
+              <FontAwesomeIcon
+                icon="search"
+                style={{
+                  fontSize: "100px",
+                  margin: "30px",
+                  color: "#ECF0F1"
+                }}
+              />
               <h2>
                 Looking to explore the marvel universe? Try out the search
                 function!
               </h2>
-            </div>
+            </Link>
           </div>
 
           <div className="row">
             <Notifications notifications={this.props.notifications} />
-            <div className="col-lg-6 col-md-12 text-center myCollection">
-              <Link to="/collection">
-                <h2 style={{ color: "#fff" }}>MY COLLECTION</h2>
-              </Link>
+            <Link
+              to="/collection"
+              className="col-lg-6 col-md-12 text-center myCollection link_page"
+            >
+              <h2 style={{ color: "#fff" }}>MY COLLECTION</h2>
 
               <div className="row" style={{ margin: "30px " }}>
                 <div className="col-6 text-center">
@@ -143,11 +144,11 @@ class Home extends Component {
                         "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black"
                     }}
                   >
-                    Get more packages and earn your favorite cards today!
+                    Open card packages and get your favorite cards today!
                   </h4>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           <div className="row showcase">

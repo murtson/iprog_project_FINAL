@@ -14,6 +14,10 @@
   background-size: cover;
 }
 
+.welcomeMessage:hover {
+  opacity: 0.6;
+}
+
 .welcomeMessage h1 {
   margin-top: 100px;
 }
@@ -41,6 +45,10 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.myCollection:hover {
+  opacity: 0.6;
 }
 
 .home h1,
@@ -107,4 +115,8 @@ a.btn-primary {
   border: 2px solid black;
   box-shadow: 2px 2px black;
   background-color: #ec7063;
+}
+
+.link_page:hover {
+  text-decoration: none;
 }
